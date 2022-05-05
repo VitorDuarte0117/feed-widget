@@ -1,17 +1,39 @@
-import { ArrowLeft } from "phosphor-react";
+import { ArrowLeft, Camera } from "phosphor-react";
+import { FormEvent, useState } from "react";
 import { FeedbackType, feedbackTypes } from "..";
 import CloseButton from "../../CloseButton";
+import ScreenshotButton from "./ScreenshotButton";
 
 interface FeedbackContentStepProps {
     feedbackType: FeedbackType;
+    onFeedbackRestartRequested: () => void;
+    onFeedbackSent: () => void;
 }
 
-const FeedbackContentStep = ({ feedbackType }: FeedbackContentStepProps) => {
+const FeedbackContentStep = ({
+    feedbackType,
+    onFeedbackRestartRequested,
+    onFeedbackSent,
+}: FeedbackContentStepProps) => {
+    const [screenshot, setScreenshot] = useState<string | null>(null);
+    const [comment, setComment] = useState("");
+
     const feedbackTypeInfo = feedbackTypes[feedbackType];
+
+    function handleSubmitFeedback(e: FormEvent) {
+        e.preventDefault();
+        console.log({
+            screenshot,
+            comment,
+        });
+        onFeedbackSent();
+    }
+
     return (
         <>
             <header>
                 <button
+                    onClick={onFeedbackRestartRequested}
                     type="button"
                     className="top-5 left-5 absolute text-zinc-400 hover:text-zinc-100"
                 >
@@ -27,7 +49,27 @@ const FeedbackContentStep = ({ feedbackType }: FeedbackContentStepProps) => {
                 </span>
                 <CloseButton />
             </header>
-            <div className="flex py-8 gap-2 w-full"></div>
+            <form onSubmit={handleSubmitFeedback} className="my-4 w-full">
+                <textarea
+                    onChange={(e) => setComment(e.target.value)}
+                    value={comment}
+                    className="min-w-[304px] w-full min-h-[112px] text-sm placeholder-zinc-500 text-zinc-100 border-zinc-400 bg-transparent rounded-md focus:border-brand-500 focus:ring-brand-500 focus:ring-1 focus:outline-none resize-none scrollbar scrollbar-thumb-zinc-700 scrollbar-track-transparent scrollbar-thin "
+                    placeholder="Tell us what's going on..."
+                />
+                <footer className=" flex gap-2 mt-2">
+                    <ScreenshotButton
+                        screenshot={screenshot}
+                        onScreenshotTook={setScreenshot}
+                    />
+                    <button
+                        type="submit"
+                        disabled={comment.length === 0}
+                        className="p-2 bg-brand-500 rounded-md border-transparent flex-1 flex justify-center items-center text-sm hover:bg-brand-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:ring-brand-500 transition-colors disabled:opacity-50 disabled:hover:bg-brand-500"
+                    >
+                        Send Feedback
+                    </button>
+                </footer>
+            </form>
         </>
     );
 };
