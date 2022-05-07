@@ -1,14 +1,9 @@
-// GET = to search information
-// POST = Cadastrar informações
-// PUT = Atualizar informações de uma entidade,tipo mudar dados deu um usuario cadastrado
-// PATCH atualizar informação unica de uma entidade
-// Delete Deletar informação
-
+import cors from "cors";
 import express from "express";
 import { routes } from "./routes";
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 app.use(routes);
 
